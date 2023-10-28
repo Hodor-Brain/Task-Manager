@@ -1,4 +1,4 @@
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.shortcuts import render, redirect
@@ -25,6 +25,19 @@ class RegistrationView(CreateView):
 
 class CustomLoginView(LoginView):
     template_name = 'TaskManagerApplication/login.html'
+
+
+def logout_view(request):
+    logout(request)
+    return redirect('home')
+
+
+def main_page(request):
+    return render(request, 'TaskManagerApplication/main_page.html')
+
+
+def navigation_bar(request):
+    return render(request, 'TaskManagerApplication/navbar.html')
 
 
 def task_list(request):

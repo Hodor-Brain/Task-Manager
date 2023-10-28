@@ -18,12 +18,14 @@ from django.contrib import admin
 from django.urls import path
 
 from TaskManagerApplication import views
-from TaskManagerApplication.views import RegistrationView, CustomLoginView, create_task
+from TaskManagerApplication.views import RegistrationView, CustomLoginView, create_task, logout_view, main_page
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('tasks/', views.task_list, name='task-list'),
     path('register/', RegistrationView.as_view(), name='register'),
     path('login/', CustomLoginView.as_view(), name='login'),
+    path('logout/', logout_view, name='logout'),
     path('tasks/create/', create_task, name='task-create'),
+    path('', main_page, name='main-page'),
 ]
