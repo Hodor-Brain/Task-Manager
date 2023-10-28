@@ -1,4 +1,4 @@
-from django.contrib.auth import login, logout
+from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
 from django.shortcuts import render, redirect
@@ -15,12 +15,17 @@ class RegistrationView(CreateView):
     success_url = reverse_lazy('task-list')
 
     def form_valid(self, form):
-        user = form.save()
-        user_profile = UserProfile.objects.create(user=user, role="user")
+        user = form.save(commit=False)
+        user.set_password(form.cleaned_data.get("password1"))
+        user.save()
 
-        login(self.request, user)
+        UserProfile.objects.create(user=user, role="user")
 
-        return super().form_valid(form)
+        authenticated_user = authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password1'])
+
+        login(self.request, authenticated_user)
+
+        return redirect(self.success_url)
 
 
 class CustomLoginView(LoginView):
@@ -40,9 +45,13 @@ def navigation_bar(request):
     return render(request, 'TaskManagerApplication/navbar.html')
 
 
+@login_required
 def task_list(request):
-    tasks = Task.objects.all()
-    return render(request, 'TaskManagerApplication/task_list.html', {'tasks': tasks})
+    tasks = Task.objects.filter(user=request.user)
+    context = {
+        'tasks': tasks,
+    }
+    return render(request, 'TaskManagerApplication/task_list.html', context)
 
 
 @login_required
