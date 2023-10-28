@@ -29,7 +29,7 @@ class CustomLoginView(LoginView):
 
 def logout_view(request):
     logout(request)
-    return redirect('home')
+    return redirect('/')
 
 
 def main_page(request):
