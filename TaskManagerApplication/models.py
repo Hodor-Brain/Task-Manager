@@ -13,4 +13,4 @@ class Task(models.Model):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    role = models.CharField(max_length=20)
+    role = models.CharField(max_length=10, choices=[("user", "User"), ("admin", "Admin")])
