@@ -2,8 +2,10 @@
 <html>
 <head>
     <title>Edit Task</title>
+    {% include "TaskManagerApplication/bootstrap.html" %}
 </head>
 <body>
+    {% include "TaskManagerApplication/navbar.html" %}
     <h2>Edit Task</h2>
     <form method="post">
         {% csrf_token %}
