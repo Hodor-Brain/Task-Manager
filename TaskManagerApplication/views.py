@@ -2,7 +2,7 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DeleteView, FormView
 
@@ -86,3 +86,17 @@ def create_task(request):
         form = TaskForm()
 
     return render(request, 'TaskManagerApplication/task_create.html', {'form': form})
+
+
+def task_update(request, task_id):
+    task = get_object_or_404(Task, pk=task_id)
+
+    if request.method == 'POST':
+        form = TaskForm(request.POST, instance=task)
+        if form.is_valid():
+            form.save()
+            return redirect('task-list')
+    else:
+        form = TaskForm(instance=task)
+
+    return render(request, 'TaskManagerApplication/task_update.html', {'form': form, 'task': task})

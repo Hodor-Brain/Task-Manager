@@ -24,7 +24,7 @@ from TaskManagerApplication.views import (
     create_task,
     logout_view,
     main_page,
-    TaskDeleteMultipleView
+    TaskDeleteMultipleView, task_update
 )
 
 urlpatterns = [
@@ -36,4 +36,5 @@ urlpatterns = [
     path('tasks/create/', create_task, name='task-create'),
     path('task/delete-multiple/', TaskDeleteMultipleView.as_view(), name='task-delete-multiple'),
     path('', main_page, name='main-page'),
+    path('task/update/<int:task_id>/', task_update, name='task-update'),
 ]
