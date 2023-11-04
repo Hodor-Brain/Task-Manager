@@ -10,9 +10,15 @@
         {% if user.is_authenticated %}
         <a href="{% url 'task-create' %}" class="btn btn-primary">Create Task</a>
         {% endif %}
+    </ul>
+    <form method="post" action="{% url 'task-delete-multiple' %}">
+        {% csrf_token %}
+        {{ selection_form.management_form }}
+
         <table>
             <thead>
                 <tr>
+                    <th></th>
                     <th>Title</th>
                     <th>Description</th>
                     <th>Due Date</th>
@@ -23,6 +29,9 @@
             <tbody>
                 {% for task in tasks %}
                     <tr>
+                        <td>
+                            <input type="checkbox" name="tasks" value="{{ task.pk }}">
+                        </td>
                         <td>{{ task.title }}</td>
                         <td>{{ task.description }}</td>
                         <td>{{ task.due_date }}</td>
@@ -32,7 +41,7 @@
                 {% endfor %}
             </tbody>
         </table>
-
-    </ul>
+        <button type="submit" class="btn btn-danger">Delete Selected</button>
+    </form>
 </body>
 </html>

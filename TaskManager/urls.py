@@ -18,7 +18,14 @@ from django.contrib import admin
 from django.urls import path
 
 from TaskManagerApplication import views
-from TaskManagerApplication.views import RegistrationView, CustomLoginView, create_task, logout_view, main_page
+from TaskManagerApplication.views import (
+    RegistrationView,
+    CustomLoginView,
+    create_task,
+    logout_view,
+    main_page,
+    TaskDeleteMultipleView
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,5 +34,6 @@ urlpatterns = [
     path('login/', CustomLoginView.as_view(), name='login'),
     path('logout/', logout_view, name='logout'),
     path('tasks/create/', create_task, name='task-create'),
+    path('task/delete-multiple/', TaskDeleteMultipleView.as_view(), name='task-delete-multiple'),
     path('', main_page, name='main-page'),
 ]

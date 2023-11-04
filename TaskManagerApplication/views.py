@@ -1,11 +1,12 @@
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView
+from django.views.generic import CreateView, DeleteView, FormView
 
-from .forms import RegistrationForm, TaskForm
+from .forms import RegistrationForm, TaskForm, TaskSelectionForm
 from .models import Task, UserProfile
 
 
@@ -32,6 +33,21 @@ class CustomLoginView(LoginView):
     template_name = 'TaskManagerApplication/login.html'
 
 
+class TaskDeleteMultipleView(FormView):
+    form_class = TaskSelectionForm
+    template_name = 'TaskManagerApplication/task_list.html'
+    success_url = reverse_lazy('task-list')
+
+    def form_valid(self, form):
+        selected_tasks = form.cleaned_data['tasks']
+        if selected_tasks:
+            Task.objects.filter(pk__in=selected_tasks).delete()
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        return redirect(self.success_url)
+
+
 def logout_view(request):
     logout(request)
     return redirect('/')
@@ -48,8 +64,11 @@ def navigation_bar(request):
 @login_required
 def task_list(request):
     tasks = Task.objects.filter(user=request.user)
+    selection_form = TaskSelectionForm()
+
     context = {
         'tasks': tasks,
+        'selection_form': selection_form,
     }
     return render(request, 'TaskManagerApplication/task_list.html', context)
 
