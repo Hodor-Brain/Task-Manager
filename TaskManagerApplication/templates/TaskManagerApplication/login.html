@@ -11,7 +11,8 @@
             min-height: 100vh;
         }
         .login-form {
-            max-width: 300px;
+            max-width: 600px;
+            min-width: 400px;
             padding: 20px;
             border: 1px solid #ccc;
             border-radius: 5px;
@@ -19,23 +20,17 @@
     </style>
 </head>
 <body>
+    {% include "TaskManagerApplication/navbar.html" %}
     <div class="center">
         <div class="login-form">
             <h1 class="text-center">Login</h1>
             <form method="post">
                 {% csrf_token %}
-                <div class="form-group">
-                    <label for="{{ form.username.id_for_label }}">Username:</label>
-                    {{ form.username }}
-                </div>
-                <div class="form-group mb-3">
-                    <label for="{{ form.password.id_for_label }}">Password:</label>
-                    {{ form.password }}
-                </div>
+                {{ form.as_p }}
                 <div class="d-flex justify-content-between">
-                    <button type="submit" class="btn btn-primary">Log In</button>
-                    <a href="{% url 'main-page' %}" class="btn btn-secondary">Back</a>
+                    <button type="submit" class="btn btn-primary btn-block">Log In</button>
                 </div>
+                <a href="{% url 'main-page' %}" class="btn btn-secondary btn-block my-2">Back</a>
             </form>
         </div>
     </div>

@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DeleteView, FormView
 
-from .forms import RegistrationForm, TaskForm, TaskSelectionForm
+from .forms import RegistrationForm, TaskForm, TaskSelectionForm, CustomAuthenticationForm
 from .models import Task, UserProfile
 
 
@@ -31,6 +31,7 @@ class RegistrationView(CreateView):
 
 class CustomLoginView(LoginView):
     template_name = 'TaskManagerApplication/login.html'
+    authentication_form = CustomAuthenticationForm
 
 
 class TaskDeleteMultipleView(FormView):
