@@ -28,6 +28,7 @@ from TaskManagerApplication.views import (
 )
 
 urlpatterns = [
+    path('', main_page, name='main-page'),
     path('admin/', admin.site.urls),
     path('tasks/', views.task_list, name='task-list'),
     path('register/', RegistrationView.as_view(), name='register'),
@@ -35,6 +36,5 @@ urlpatterns = [
     path('logout/', logout_view, name='logout'),
     path('tasks/create/', create_task, name='task-create'),
     path('task/delete-multiple/', TaskDeleteMultipleView.as_view(), name='task-delete-multiple'),
-    path('', main_page, name='main-page'),
     path('task/update/<int:task_id>/', task_update, name='task-update'),
 ]

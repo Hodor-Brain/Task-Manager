@@ -50,7 +50,7 @@ class TaskDeleteMultipleView(FormView):
 
 def logout_view(request):
     logout(request)
-    return redirect('/')
+    return redirect('main-page')
 
 
 def main_page(request):
