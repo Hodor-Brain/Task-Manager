@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Create Task</title>
+    <title>Edit Task</title>
 </head>
 <body>
-    <h1>Create Task</h1>
+    <h2>Edit Task</h2>
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Create Task</button>
+        <button type="submit" class="btn btn-primary">Save</button>
     </form>
     <a href="{% url 'task-list' %}" class="btn btn-primary">Back</a>
 </body>

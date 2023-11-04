@@ -1,11 +1,12 @@
-from django.contrib.auth import login, logout
+from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic import CreateView
+from django.views.generic import CreateView, DeleteView, FormView
 
-from .forms import RegistrationForm, TaskForm
+from .forms import RegistrationForm, TaskForm, TaskSelectionForm
 from .models import Task, UserProfile
 
 
@@ -15,21 +16,41 @@ class RegistrationView(CreateView):
     success_url = reverse_lazy('task-list')
 
     def form_valid(self, form):
-        user = form.save()
-        user_profile = UserProfile.objects.create(user=user, role="user")
+        user = form.save(commit=False)
+        user.set_password(form.cleaned_data.get("password1"))
+        user.save()
 
-        login(self.request, user)
+        UserProfile.objects.create(user=user, role="user")
 
-        return super().form_valid(form)
+        authenticated_user = authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password1'])
+
+        login(self.request, authenticated_user)
+
+        return redirect(self.success_url)
 
 
 class CustomLoginView(LoginView):
     template_name = 'TaskManagerApplication/login.html'
 
 
+class TaskDeleteMultipleView(FormView):
+    form_class = TaskSelectionForm
+    template_name = 'TaskManagerApplication/task_list.html'
+    success_url = reverse_lazy('task-list')
+
+    def form_valid(self, form):
+        selected_tasks = form.cleaned_data['tasks']
+        if selected_tasks:
+            Task.objects.filter(pk__in=selected_tasks).delete()
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        return redirect(self.success_url)
+
+
 def logout_view(request):
     logout(request)
-    return redirect('home')
+    return redirect('main-page')
 
 
 def main_page(request):
@@ -40,9 +61,16 @@ def navigation_bar(request):
     return render(request, 'TaskManagerApplication/navbar.html')
 
 
+@login_required
 def task_list(request):
-    tasks = Task.objects.all()
-    return render(request, 'TaskManagerApplication/task_list.html', {'tasks': tasks})
+    tasks = Task.objects.filter(user=request.user)
+    selection_form = TaskSelectionForm()
+
+    context = {
+        'tasks': tasks,
+        'selection_form': selection_form,
+    }
+    return render(request, 'TaskManagerApplication/task_list.html', context)
 
 
 @login_required
@@ -58,3 +86,17 @@ def create_task(request):
         form = TaskForm()
 
     return render(request, 'TaskManagerApplication/task_create.html', {'form': form})
+
+
+def task_update(request, task_id):
+    task = get_object_or_404(Task, pk=task_id)
+
+    if request.method == 'POST':
+        form = TaskForm(request.POST, instance=task)
+        if form.is_valid():
+            form.save()
+            return redirect('task-list')
+    else:
+        form = TaskForm(instance=task)
+
+    return render(request, 'TaskManagerApplication/task_update.html', {'form': form, 'task': task})
