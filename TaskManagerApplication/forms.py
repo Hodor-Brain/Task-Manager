@@ -18,6 +18,7 @@ class TaskForm(forms.ModelForm):
         widget=forms.SelectDateWidget(years=range(DUE_DATE_SMALLEST_YEAR, DUE_DATE_BIGGEST_YEAR + 1))
     )
     status = forms.ChoiceField(choices=STATUS_CHOICES)
+    description = forms.CharField(widget=forms.Textarea(attrs={'maxlength': 1000}))
 
     class Meta:
         model = Task
