@@ -49,6 +49,10 @@ class TaskDeleteMultipleView(FormView):
         return redirect(self.success_url)
 
 
+def custom_404(request, exception):
+    return render(request, 'TaskManagerApplication/404.html', status=404)
+
+
 def logout_view(request):
     logout(request)
     return redirect('main-page')

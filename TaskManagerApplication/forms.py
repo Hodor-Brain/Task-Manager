@@ -1,7 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
-
 from .models import Task
 
 DUE_DATE_SMALLEST_YEAR = 2020
@@ -15,7 +14,7 @@ STATUS_CHOICES = (
 
 class TaskForm(forms.ModelForm):
     due_date = forms.DateField(
-        widget=forms.SelectDateWidget(years=range(DUE_DATE_SMALLEST_YEAR, DUE_DATE_BIGGEST_YEAR + 1))
+        widget=forms.DateInput(attrs={"type": "date"})
     )
     status = forms.ChoiceField(choices=STATUS_CHOICES)
     description = forms.CharField(widget=forms.Textarea(attrs={'maxlength': 1000}))
@@ -32,6 +31,9 @@ class TaskForm(forms.ModelForm):
 
 
 class RegistrationForm(UserCreationForm):
+    password1 = forms.CharField(max_length=128, widget=forms.PasswordInput)
+    password2 = forms.CharField(max_length=128, widget=forms.PasswordInput)
+
     class Meta:
         model = User
         fields = ['username', 'email', 'password1', 'password2']
@@ -44,7 +46,7 @@ class RegistrationForm(UserCreationForm):
 
 class CustomAuthenticationForm(AuthenticationForm):
     username = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
-    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    password = forms.CharField(max_length=128, widget=forms.PasswordInput(attrs={'class': 'form-control'}))
 
 
 class TaskSelectionForm(forms.Form):

@@ -38,3 +38,5 @@ urlpatterns = [
     path('task/delete-multiple/', TaskDeleteMultipleView.as_view(), name='task-delete-multiple'),
     path('task/update/<int:task_id>/', task_update, name='task-update'),
 ]
+
+handler404 = 'TaskManagerApplication.views.custom_404'
